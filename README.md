@@ -1,5 +1,9 @@
 # AutoSearchVideo
 
+## 搭配使用
+
+[网易云歌单名称提取](https://music.unmeta.cn/)
+
 ## 配置说明
 
 请将cookie信息放在 `cookie.txt` 文件中。
