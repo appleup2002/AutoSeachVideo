@@ -66,6 +66,22 @@ def doSearch(target, cookie):
     result = json.loads(result.text)
     return result["data"]["result"][11]['data'][0]
 
+def favVideo2Folder(aid, mid, cookie):
+    url = 'https://api.bilibili.com/x/v3/fav/resource/deal'
+    headers = {
+        'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'Cookie': f'SESSDATA={cookie["SESSDATA"]};'
+    }
+    params = {
+        'rid': aid,
+        'type': 2,
+        'add_media_ids': mid,
+        'csrf': cookie['bili_jct']
+    }
+    result = requests.post(url = url, data = params, headers = headers).text
+    result = json.loads(result)
+    return result
+
 def main():
     searchInfo = getSongByFile()
     cookie = getCookieByFile()
@@ -84,14 +100,19 @@ def main():
     for target in searchInfo:
         time.sleep(random.randint(2,6))
         data = doSearch(target, cookie)
-        success += 1
-        print(f"找到结果:{removeHtmlTags(data['title'])}, 当前已经完成{success} / {len(searchInfo)}")
+        print(f"找到结果:{removeHtmlTags(data['title'])}")
         time.sleep(random.randint(2,6))
+        res =  favVideo2Folder(data['aid'], folder, datas)
+        if res["code"] == 0:
+            success += 1
+            print(f'收藏成功, 当前已经成功{success} / {len(searchInfo)}')
+        else:
+            print('失败,具体请见日志')
+            with open('log.txt', 'a', encoding='utf-8') as f:
+                f.write(f'code: {res['code']}, msg: {res['message']}')
 
+    print(f'收藏结束,成功 {success} / {len(searchInfo)}')
 
 
 if __name__ == "__main__":
     main()
-
-
-
