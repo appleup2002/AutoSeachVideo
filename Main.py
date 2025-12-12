@@ -52,7 +52,7 @@ def getFavFolder(mid, datas):
 
     result = requests.get(url = url, params= params, headers = headers)
     result = json.loads(result.text)
-    return result
+    return result["data"]['list']
 
 
 def doSearch(target, cookie):
