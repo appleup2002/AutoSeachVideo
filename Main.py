@@ -93,9 +93,10 @@ def main():
     folders = getFavFolder(mid, datas)    
     print("输入目标文件夹序号进行选择")
     for i in range(0, len(folders)):
-        print(f'{i}. {folders[i]["title"]}')
+        title = folders[i]["title"]
+        print(f'{i}. {title}')
     target = int(input())
-    
+
     folder = folders[target]["id"]
     success = 0
     for target in searchInfo:
