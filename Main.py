@@ -36,7 +36,9 @@ def getMid(datas):
     }
     result = requests.get(url = url, headers = headers)
     result = json.loads(result.text)
-    return result['data']['mid'];
+    if result["code"] == 0:
+        return result['data']['mid'];
+
 
 def getFavFolder(mid, datas):
     url = 'https://api.bilibili.com/x/v3/fav/folder/created/list-all'
@@ -50,7 +52,7 @@ def getFavFolder(mid, datas):
 
     result = requests.get(url = url, params= params, headers = headers)
     result = json.loads(result.text)
-    return result["data"]['list']
+    return result
 
 
 def doSearch(target, cookie):
@@ -87,21 +89,32 @@ def main():
     cookie = getCookieByFile()
     datas = getData(cookie)
     mid = getMid(datas)
-
     time.sleep(random.randint(2,6))
-    
-    folders = getFavFolder(mid, datas)
+    folders = getFavFolder(mid, datas)    
     print("输入目标文件夹序号进行选择")
     for i in range(0, len(folders)):
         print(f'{i}. {folders[i]["title"]}')
     target = int(input())
+    
     folder = folders[target]["id"]
     success = 0
     for target in searchInfo:
-        time.sleep(random.randint(2,6))
+        time.sleep(random.randint(20,60))
         data = doSearch(target, cookie)
-        print(f"找到结果:{removeHtmlTags(data['title'])}")
-        time.sleep(random.randint(2,6))
+        if(data['code'] == 0):
+            data = ["data"]['list']
+            print(f"找到结果:{removeHtmlTags(data['title'])}")
+        else:
+            code = data["code"]
+            msg = data["message"]
+            print(f'搜索失败, target: {target}, code: {code}, msg: {msg}')
+            with open('log.txt', 'a', encoding='utf-8') as f:
+                code = res['code']
+                msg = res['message']
+                f.write(f'keyword: {target} code: {code}, msg: {msg}')
+            continue;
+
+        time.sleep(random.randint(20,60))
         res =  favVideo2Folder(data['aid'], folder, datas)
         if res["code"] == 0:
             success += 1
@@ -111,7 +124,7 @@ def main():
             with open('log.txt', 'a', encoding='utf-8') as f:
                 code = res['code']
                 msg = res['message']
-                f.write(f'code: {code}, msg: {msg}')
+                f.write(f'keyword: {target} code: {code}, msg: {msg}')
 
     print(f'收藏结束,成功 {success} / {len(searchInfo)}')
 
