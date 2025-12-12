@@ -66,7 +66,7 @@ def doSearch(target, cookie):
     }
     result = requests.get(url = url, params = params, headers = headers)
     result = json.loads(result.text)
-    return result["data"]["result"][11]['data'][0]
+    return result
 
 def favVideo2Folder(aid, mid, cookie):
     url = 'https://api.bilibili.com/x/v3/fav/resource/deal'
@@ -103,7 +103,7 @@ def main():
         time.sleep(random.randint(20,60))
         data = doSearch(target, cookie)
         if(data['code'] == 0):
-            data = ["data"]['list']
+            data = data["data"]["result"][11]['data'][0]
             print(f"找到结果:{removeHtmlTags(data['title'])}")
         else:
             code = data["code"]
