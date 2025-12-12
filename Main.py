@@ -109,7 +109,9 @@ def main():
         else:
             print('失败,具体请见日志')
             with open('log.txt', 'a', encoding='utf-8') as f:
-                f.write(f'code: {res['code']}, msg: {res['message']}')
+                code = res['code']
+                msg = res['message']
+                f.write(f'code: {code}, msg: {msg}')
 
     print(f'收藏结束,成功 {success} / {len(searchInfo)}')
 
